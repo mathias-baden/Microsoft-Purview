@@ -14,11 +14,9 @@ Turns the Microsoft Purview Information Protection Scanner's raw `DetailedReport
 A near-real-time detection that alerts when a file's sensitivity label is downgraded *out* of a sensitive tier — e.g. HR / Highly Confidential → Public. A KQL query plus a Microsoft 365 Defender custom detection rule. Includes the NRT `summarize` gotcha that makes rules silently stop alerting.
 `KQL` · `sensitivity labels` · `custom detection rule`
 
-## 🔗 Related
+## 🔗 Related repositories
 
-### [Defender for Cloud Apps — Policy Backup](./Defender%20for%20Cloud%20Apps%20-%20Policy%20Backup/)
-A PowerShell script that backs up every Defender for Cloud Apps (MDCA) policy as JSON to Azure Storage. Lives here because MDCA's data-security capabilities are converging into Purview.
-`PowerShell` · `MDCA API` · `Azure Storage`
+- [Microsoft-Defender-for-Cloud-Apps](https://github.com/mathias-baden/Microsoft-Defender-for-Cloud-Apps) — scripts and tools for Defender for Cloud Apps (MDCA)
 
 ## A note on the examples
 
