@@ -5,7 +5,7 @@ custom detection rule, that alerts in near real-time when a file's
 sensitivity label is downgraded out of a sensitive tier (e.g. HR /
 Highly Confidential → Public).
 
-- **Query file:** [`mdca-label-downgrade-query.kql`](./label-downgrade.kql)
+- **Query file:** [`label-downgrade.kql`](./label-downgrade.kql)
 - **Data source:** `CloudAppEvents`
 - **Detection frequency:** Continuous (NRT)
 
@@ -14,15 +14,15 @@ Highly Confidential → Public).
 1. A `listLabelNames` function maps each sensitivity label's GUID to a
    human-readable name, so alerts and results show label names instead of
    opaque IDs.
-2. The query watches `CloudAppEvents` for four action types that all
-   indicate a label was changed or removed.
+2. The query watches `CloudAppEvents` for the action types that indicate a
+   label was changed or removed.
 3. It flags any event where the **source** label is in a monitored
    "sensitive" tier and the **destination** label is not — i.e. a
    downgrade out of that tier.
 
-The label IDs and names in this file are specific to one tenant. **You
-must replace them with your own tenant's labels before this query will
-return anything meaningful.**
+The label IDs and names shipped in the query file are **placeholders /
+examples**. **You must replace them with your own tenant's labels before
+this query will return anything meaningful.**
 
 ## Step 1 — Get your tenant's label IDs
 
