@@ -1,0 +1,6 @@
+// Explore the DlpInfo column in DeviceInfo
+// Guide: https://mathiasbaden.com/posts/endpoint-dlp-device-data-advanced-hunting.html
+DeviceInfo
+| where isnotempty(DlpInfo)
+| project Timestamp, DeviceName, DlpInfo
+| take 50

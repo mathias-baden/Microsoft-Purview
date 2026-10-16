@@ -1,0 +1,13 @@
+// Overview: how many devices are healthy for Endpoint DLP, and how many have a problem
+// Guide: https://mathiasbaden.com/posts/endpoint-dlp-device-data-advanced-hunting.html
+DeviceInfo
+| where Timestamp > ago(7d)
+| where isnotempty(DlpInfo)
+| summarize arg_max(Timestamp, *) by DeviceId
+| extend Dlp = parse_json(DlpInfo)
+| summarize Devices = count(),
+    DlpDisabled   = countif(not(tobool(Dlp.IsDlpEnabled))),
+    ConfigInvalid = countif(not(tobool(Dlp.IsDlpConfigurationValid))),
+    RealTimeOff   = countif(not(tobool(Dlp.IsDefenderRealTimeProtectionEnabled))),
+    BehaviorOff   = countif(not(tobool(Dlp.IsDefenderBehaviorMonitoringEnabled))),
+    NoValidUser   = countif(not(tobool(Dlp.HasDlpValidUpn)))

@@ -1,0 +1,12 @@
+// Custom detection rule: device not ready for Endpoint DLP. Run every 24h, impacted entity: Device (DeviceId)
+// Guide: https://mathiasbaden.com/posts/endpoint-dlp-device-data-advanced-hunting.html
+DeviceInfo
+| where Timestamp > ago(1d)
+| where isnotempty(DlpInfo)
+| summarize arg_max(Timestamp, *) by DeviceId
+| extend Dlp = parse_json(DlpInfo)
+| where not(tobool(Dlp.IsDlpEnabled))
+    or not(tobool(Dlp.IsDlpConfigurationValid))
+    or not(tobool(Dlp.IsDefenderRealTimeProtectionEnabled))
+    or not(tobool(Dlp.IsDefenderBehaviorMonitoringEnabled))
+| project Timestamp, DeviceId, ReportId, DeviceName, User = tostring(Dlp.DlpUpn)

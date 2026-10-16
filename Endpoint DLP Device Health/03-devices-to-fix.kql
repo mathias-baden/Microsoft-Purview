@@ -1,0 +1,17 @@
+// One row per device that isn't fully ready for Endpoint DLP, with what's wrong
+// Guide: https://mathiasbaden.com/posts/endpoint-dlp-device-data-advanced-hunting.html
+DeviceInfo
+| where Timestamp > ago(7d)
+| where isnotempty(DlpInfo)
+| summarize arg_max(Timestamp, *) by DeviceId
+| extend Dlp = parse_json(DlpInfo)
+| extend Issues = set_difference(pack_array(
+    iff(tobool(Dlp.IsDlpEnabled), "", "Endpoint DLP disabled"),
+    iff(tobool(Dlp.IsDlpConfigurationValid), "", "Configuration invalid"),
+    iff(tobool(Dlp.IsDefenderRealTimeProtectionEnabled), "", "Real-time protection off"),
+    iff(tobool(Dlp.IsDefenderBehaviorMonitoringEnabled), "", "Behavior monitoring off"),
+    iff(tobool(Dlp.HasDlpValidUpn), "", "No valid user")),
+    dynamic([""]))
+| where array_length(Issues) > 0
+| project LastSeen = Timestamp, DeviceName, User = tostring(Dlp.DlpUpn), Issues
+| order by LastSeen desc

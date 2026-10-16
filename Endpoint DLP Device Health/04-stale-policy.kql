@@ -1,0 +1,12 @@
+// Devices that haven't synced the latest DLP policy change (waits 2h after the newest change)
+// Guide: https://mathiasbaden.com/posts/endpoint-dlp-device-data-advanced-hunting.html
+let Devices = DeviceInfo
+| where Timestamp > ago(7d)
+| where isnotempty(DlpInfo)
+| summarize arg_max(Timestamp, *) by DeviceId
+| extend PolicyTime = todatetime(parse_json(DlpInfo).DlpPolicyLastModifiedTimeUTC);
+let Latest = toscalar(Devices | summarize max(PolicyTime));
+Devices
+| where PolicyTime < Latest and now() - Latest > 2h
+| project LastSeen = Timestamp, DeviceName, PolicyTime
+| order by PolicyTime asc
